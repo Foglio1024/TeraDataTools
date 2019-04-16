@@ -34,16 +34,25 @@ namespace GothosDC.LowLevel
         internal DataCenterRaw(Stream stream)
         {
             _stream = stream;
+            Console.WriteLine("Reading regions... ");
             Regions = RegionListReader.ReadAllRegions(stream);
-
+            Console.WriteLine("Reading header... ");
             ReadHeader();
+            Console.WriteLine("Reading strings... ");
             Strings = ReadSegmented(Regions.Strings, r => r.ReadTeraString());
+            Console.WriteLine("Reading values... ");
             Values = ReadSegmented(Regions.Values, r => r.ReadDcValue());
+            Console.WriteLine("Reading string IDs... ");
             StringIds = ReadAll(Regions.StringIds, r => r.ReadSegmentAddress());
+            Console.WriteLine("Reading string unks... ");
             StringUnknown = ReadSegmented(Regions.Unknown1, r => r.ReadUnknown());
+            Console.WriteLine("Reading names... ");
             Names = ReadSegmented(Regions.Names, r => r.ReadTeraString());
+            Console.WriteLine("Reading name IDs... ");
             NameIds = ReadAll(Regions.NameIds, r => r.ReadSegmentAddress());
+            Console.WriteLine("Reading name unks... ");
             NameUnknown = ReadSegmented(Regions.Unknown1, r => r.ReadUnknown());
+            Console.WriteLine("Reading elements... ");
             Elements = ReadSegmented(Regions.Elements, r => r.ReadDcObject());
 
             AssertSequenceEquals(Strings.Select(x => x.Key), StringIds);
@@ -51,6 +60,7 @@ namespace GothosDC.LowLevel
 
             _buffer = null;
             _stream = null;
+            Console.WriteLine("Done creating DataCenterRaw");
         }
 
         private void ReadHeader()
